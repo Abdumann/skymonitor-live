@@ -8,8 +8,8 @@ h1{font-size:17px;margin:0}
 .sub{color:var(--muted);font-size:12px}
 .kpis{display:flex;flex-wrap:wrap;gap:4px 14px;margin-left:auto;font-variant-numeric:tabular-nums}
 .kpis b{font-weight:600}
-.qrbtn{font:inherit;font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);
-border-radius:6px;padding:3px 8px;cursor:pointer}
+.hbtn{font:inherit;font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);
+border-radius:6px;padding:3px 8px;cursor:pointer;white-space:nowrap}
 nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav button{flex:none;font:inherit;color:var(--muted);background:transparent;border:1px solid var(--line);
@@ -24,7 +24,27 @@ main{padding:10px 16px 16px}
 background:#000;cursor:zoom-in}
 .shot.zoom{width:auto;max-width:none;min-width:100%;cursor:zoom-out}
 .empty{padding:60px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:6px}
-footer{color:var(--muted);font-size:12px;padding:0 16px 20px}
+/* Kino rejimi: rasm butun ekranni to'ldiradi (telefon yonboshda yoki "To'liq ekran") */
+body.cinema{overflow:hidden;background:#000}
+body.cinema header,body.cinema .state{display:none}
+body.cinema main{padding:0}
+body.cinema .wrap{position:fixed;inset:0;background:#000;overflow:hidden}
+body.cinema .shot,body.cinema .shot.zoom{position:absolute;top:50%;left:50%;width:100vw;height:100vh;
+height:100dvh;max-width:none;min-width:0;object-fit:contain;border:0;border-radius:0;
+transform:translate(-50%,-50%);cursor:default}
+@media (orientation:portrait){
+  body.cinema .shot,body.cinema .shot.zoom{width:100vh;width:100dvh;height:100vw;transform:translate(-50%,-50%) rotate(90deg)}
+}
+body.cinema .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:0}
+.cine{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:8px;
+padding:10px max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+background:linear-gradient(transparent,rgba(0,0,0,.85));transition:opacity .25s}
+.cine[hidden]{display:none}
+.cine.fade{opacity:0;pointer-events:none}
+.cine nav{flex:1;padding:0}
+.cine nav button{background:rgba(16,24,42,.8)}
+.cexit{flex:none;font:inherit;font-size:18px;line-height:1;color:var(--text);background:rgba(16,24,42,.8);
+border:1px solid var(--line);border-radius:50%;width:38px;height:38px;cursor:pointer}
 .qr{position:fixed;inset:0;z-index:5;background:rgba(6,6,15,.92);display:flex;align-items:center;
 justify-content:center;padding:16px}
 .qr[hidden]{display:none}

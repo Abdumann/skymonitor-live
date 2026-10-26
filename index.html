@@ -2,10 +2,14 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06060f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Sky Monitor — jonli</title>
 <meta name="description" content="Osmon kamerasi asosida quyosh radiatsiyasi monitoringi — jonli ko'rinish">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <header>
@@ -13,7 +17,8 @@
     <h1>Sky Monitor</h1>
     <span class="sub">Osmon kamerasi asosida quyosh radiatsiyasi monitoringi · Sky-camera solar radiation monitoring</span>
     <div class="kpis" id="kpis"></div>
-    <button class="qrbtn" id="qrbtn" type="button" title="QR kod">QR</button>
+    <button class="hbtn" id="fsbtn" type="button" title="To'liq ekran · Full screen">⛶ To'liq ekran</button>
+    <button class="hbtn" id="qrbtn" type="button" title="QR kod">QR</button>
   </div>
   <nav id="tabs"></nav>
 </header>
@@ -21,15 +26,15 @@
   <div class="state" id="state"><span>Ulanmoqda… · Connecting…</span></div>
   <div class="wrap" id="wrap"><div class="empty">Yuklanmoqda… · Loading…</div></div>
 </main>
-<footer>
-  Faqat ko'rish uchun — kompyuterdagi dasturning jonli nusxasi. View only — live copy of the desktop app.
-  Rasmni kattalashtirish uchun bosing · Tap the image to zoom. Sahifani ochiq qoldiring · Keep this page open.
-</footer>
+<div class="cine" id="cine" hidden>
+  <nav id="ctabs"></nav>
+  <button class="cexit" id="cexit" type="button" title="Chiqish · Exit">✕</button>
+</div>
 <div class="qr" id="qr" hidden>
   <div class="qrbox"><div id="qrcode"></div>
   <p class="qrtitle">Skanerlang · Scan to view</p><p class="qrurl" id="qrurl"></p></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script type="module" src="app.js"></script>
+<script type="module" src="app.js?v=3"></script>
 </body>
 </html>

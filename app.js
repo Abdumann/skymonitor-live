@@ -76,12 +76,14 @@ function choose(i) {
 }
 function drawTabs() {
   if (!meta || !meta.tabs) return;
-  $("tabs").replaceChildren(...meta.tabs.map((t) => {
-    const b = el("button", t.i === sel ? "on" : "", t.name);
-    b.type = "button";
-    b.onclick = () => { if (t.i !== sel) choose(t.i); };
-    return b;
-  }));
+  for (const id of ["tabs", "ctabs"]) {
+    $(id).replaceChildren(...meta.tabs.map((t) => {
+      const b = el("button", t.i === sel ? "on" : "", t.name);
+      b.type = "button";
+      b.onclick = (e) => { e.stopPropagation(); if (t.i !== sel) choose(t.i); if (cinema()) showControls(); };
+      return b;
+    }));
+  }
 }
 function drawState() {
   const p = [];
@@ -118,7 +120,7 @@ function drawShot() {
   const old = wrap.querySelector("img");
   if (old === shot.el) return;
   if (old && old.classList.contains("zoom")) shot.el.classList.add("zoom");
-  shot.el.onclick = () => shot.el.classList.toggle("zoom");
+  shot.el.onclick = () => { if (!cinema()) shot.el.classList.toggle("zoom"); };
   wrap.replaceChildren(shot.el);
 }
 function drawKpi() {
@@ -159,6 +161,72 @@ function showQr(on) {
     qrMade = true;
   }
 }
+// ── Kino rejimi: rasm butun ekranni to'ldiradi (operator 2026-10-26) ──
+// Telefon yonboshga burilsa o'zi yoqiladi; "To'liq ekran" tugmasi brauzer panellarini ham yashiradi
+// (Android: ekran yonboshga qulflanadi; iPhone: tik holatda rasm 90° buriladi).
+const phoneLandscape = matchMedia("(orientation: landscape) and (max-height: 540px)");
+let manual = false, hideTimer = null;
+const cinema = () => document.body.classList.contains("cinema");
+function setCinema(on) {
+  document.body.classList.toggle("cinema", on);
+  $("cine").hidden = !on;
+  if (on) showControls(); else clearTimeout(hideTimer);
+}
+function showControls() {
+  $("cine").classList.remove("fade");
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(() => $("cine").classList.add("fade"), 4000);
+}
+async function enterFull() {
+  manual = true;
+  setCinema(true);
+  const d = document.documentElement;
+  try {
+    if (d.requestFullscreen) await d.requestFullscreen({ navigationUI: "hide" });
+    else if (d.webkitRequestFullscreen) d.webkitRequestFullscreen();
+  } catch (e) { /* iPhone: faqat CSS rejim */ }
+  try { await screen.orientation.lock("landscape"); } catch (e) { /* qo'llanmasa — rasm CSS bilan buriladi */ }
+}
+function exitFull() {
+  manual = false;
+  try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { /* */ }
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  else if (document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+  setCinema(phoneLandscape.matches);
+}
+function onFsChange() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && manual) {
+    manual = false;
+    setCinema(phoneLandscape.matches);
+  }
+}
+document.addEventListener("fullscreenchange", onFsChange);
+document.addEventListener("webkitfullscreenchange", onFsChange);
+phoneLandscape.addEventListener("change", () => { if (!manual) setCinema(phoneLandscape.matches); });
+if (phoneLandscape.matches) setCinema(true);
+$("fsbtn").onclick = enterFull;
+$("cexit").onclick = (e) => { e.stopPropagation(); exitFull(); };
+$("wrap").addEventListener("click", () => {
+  if (!cinema()) return;
+  if ($("cine").classList.contains("fade")) showControls(); else $("cine").classList.add("fade");
+});
+// Surish: chapga -> keyingi bo'lim, o'ngga -> oldingi (kino rejimida).
+let touch0 = null;
+$("wrap").addEventListener("touchstart", (e) => {
+  touch0 = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+}, { passive: true });
+$("wrap").addEventListener("touchend", (e) => {
+  if (!cinema() || !touch0 || !meta || !meta.tabs) return;
+  const t = e.changedTouches[0];
+  let dx = t.clientX - touch0.x, dy = t.clientY - touch0.y;
+  if (!phoneLandscape.matches && matchMedia("(orientation: portrait)").matches) [dx, dy] = [dy, -dx];
+  touch0 = null;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < 1.5 * Math.abs(dy)) return;
+  const n = meta.tabs.length;
+  choose((sel + (dx < 0 ? 1 : -1) + n) % n);
+  showControls();
+}, { passive: true });
+
 $("qrbtn").onclick = () => showQr(true);
 $("qr").onclick = () => showQr(false);
 if (new URLSearchParams(location.search).get("qr") === "1") showQr(true);
