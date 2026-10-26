@@ -205,6 +205,15 @@ document.addEventListener("webkitfullscreenchange", onFsChange);
 phoneLandscape.addEventListener("change", () => { if (!manual) setCinema(phoneLandscape.matches); });
 if (phoneLandscape.matches) setCinema(true);
 $("fsbtn").onclick = enterFull;
+document.addEventListener("keydown", (e) => {
+  if (!cinema() || !meta || !meta.tabs) return;
+  if (e.key === "Escape" && manual) exitFull();
+  else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    const n = meta.tabs.length;
+    choose((sel + (e.key === "ArrowRight" ? 1 : -1) + n) % n);
+    showControls();
+  }
+});
 $("cexit").onclick = (e) => { e.stopPropagation(); exitFull(); };
 $("wrap").addEventListener("click", () => {
   if (!cinema()) return;
