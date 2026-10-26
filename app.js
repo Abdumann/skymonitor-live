@@ -126,8 +126,9 @@ function drawShot() {
   }
   const shot = shots[sel];
   if (!shot) {
-    wrap.replaceChildren(el("div", "empty",
-      "Bu bo'lim tez orada paydo bo'ladi (dastur bo'limlarni navbat bilan yuboradi) · This section will appear shortly"));
+    wrap.replaceChildren(el("div", "empty", meta && meta.minimized
+      ? "Kompyuterda dastur oynasi yig'ilgan — oyna ochilishi bilan rasm keladi · The app window is minimized"
+      : "Bu bo'lim tez orada paydo bo'ladi (dastur bo'limlarni navbat bilan yuboradi) · This section will appear shortly"));
     return;
   }
   const old = wrap.querySelector("img");
