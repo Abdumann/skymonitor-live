@@ -10,7 +10,11 @@ const PRESENCE_MS = 45000;
 const STALE_S = 120;
 
 const db = getDatabase(initializeApp(firebaseConfig));
-let meta = null, sel = null, unsubImg = null, img = null, offset = 0, connected = false;
+let meta = null, sel = null, offset = 0, connected = false;
+// Barcha tablar rasmlari oldindan obuna qilinadi va tayyor <img> holida saqlanadi:
+// tabga o'tish tarmoqni kutmaydi (operator 2026-10-26: "bo'limlarga juda sekin o'tvotti").
+const shots = {};          // i -> {v, t, el}
+const subscribed = new Set();
 
 const $ = (id) => document.getElementById(id);
 function el(tag, cls, text) {
@@ -43,14 +47,32 @@ onValue(ref(db, ".info/serverTimeOffset"), (s) => { offset = s.val() || 0; });
 setInterval(beat, PRESENCE_MS);
 
 // ── tablar ──
+function subscribeAll() {
+  if (!meta || !meta.tabs) return;
+  for (const t of meta.tabs) {
+    if (subscribed.has(t.i)) continue;
+    subscribed.add(t.i);
+    onValue(ref(db, "sky/img/" + t.i), (s) => {
+      const d = s.val();
+      if (!d || !d.jpg) return;
+      const im = new Image();
+      im.className = "shot";
+      im.alt = t.name;
+      im.decoding = "async";
+      im.onload = () => {
+        shots[t.i] = { v: d.v, t: d.t, el: im };
+        if (t.i === sel) { drawShot(); drawState(); }
+      };
+      im.src = "data:image/jpeg;base64," + d.jpg;
+    });
+  }
+}
 function choose(i) {
   sel = i;
   try { localStorage.setItem("tab", String(i)); } catch (e) { /* */ }
   drawTabs();
-  if (unsubImg) unsubImg();
-  img = null;
-  $("wrap").replaceChildren(el("div", "empty", "Yuklanmoqda… · Loading…"));
-  unsubImg = onValue(ref(db, "sky/img/" + i), (s) => { img = s.val(); drawShot(); drawState(); });
+  drawShot();
+  drawState();
 }
 function drawTabs() {
   if (!meta || !meta.tabs) return;
@@ -69,8 +91,9 @@ function drawState() {
     if (upd > STALE_S) p.push(el("span", "stale", "Dastur hozir ma'lumot yubormayapti · The station is offline"));
     else if (meta.minimized) p.push(el("span", "stale",
       "Kompyuterda dastur oynasi yig'ilgan — rasmlar vaqtincha yangilanmaydi · The app window is minimized"));
-    if (img && img.t) {
-      const age = Math.max(0, Math.round((now() - img.t) / 1000));
+    const shot = shots[sel];
+    if (shot && shot.t) {
+      const age = Math.max(0, Math.round((now() - shot.t) / 1000));
       p.push(el("span", age > STALE_S ? "stale" : "live",
         `Yangilangan: ${age} s oldin · updated ${age} s ago`));
     }
@@ -86,21 +109,17 @@ function drawState() {
 }
 function drawShot() {
   const wrap = $("wrap");
-  if (!img || !img.jpg) {
+  const shot = shots[sel];
+  if (!shot) {
     wrap.replaceChildren(el("div", "empty",
       "Bu bo'lim tez orada paydo bo'ladi (dastur bo'limlarni navbat bilan yuboradi) · This section will appear shortly"));
     return;
   }
-  const im = new Image();
-  im.className = "shot";
-  im.alt = meta && meta.tabs && meta.tabs[sel] ? meta.tabs[sel].name : "Sky Monitor";
-  im.onload = () => {
-    const old = wrap.querySelector("img");
-    if (old && old.classList.contains("zoom")) im.classList.add("zoom");
-    im.onclick = () => im.classList.toggle("zoom");
-    wrap.replaceChildren(im);
-  };
-  im.src = "data:image/jpeg;base64," + img.jpg;
+  const old = wrap.querySelector("img");
+  if (old === shot.el) return;
+  if (old && old.classList.contains("zoom")) shot.el.classList.add("zoom");
+  shot.el.onclick = () => shot.el.classList.toggle("zoom");
+  wrap.replaceChildren(shot.el);
 }
 function drawKpi() {
   const k = (meta && meta.kpi) || {};
@@ -115,6 +134,7 @@ function drawKpi() {
 onValue(ref(db, "sky/meta"), (s) => {
   meta = s.val();
   if (!meta) { drawState(); return; }
+  subscribeAll();
   if (sel === null) {
     let saved = null;
     try { saved = localStorage.getItem("tab"); } catch (e) { /* */ }
