@@ -67,6 +67,8 @@ function drawState() {
   if (meta) {
     const upd = (now() - meta.updated) / 1000;
     if (upd > STALE_S) p.push(el("span", "stale", "Dastur hozir ma'lumot yubormayapti · The station is offline"));
+    else if (meta.minimized) p.push(el("span", "stale",
+      "Kompyuterda dastur oynasi yig'ilgan — rasmlar vaqtincha yangilanmaydi · The app window is minimized"));
     if (img && img.t) {
       const age = Math.max(0, Math.round((now() - img.t) / 1000));
       p.push(el("span", age > STALE_S ? "stale" : "live",
