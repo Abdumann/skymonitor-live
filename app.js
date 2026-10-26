@@ -60,10 +60,10 @@ function subscribeAll() {
       im.alt = t.name;
       im.decoding = "async";
       im.onload = () => {
-        shots[t.i] = { v: d.v, t: d.t, el: im };
+        shots[t.i] = { v: d.v, t: d.t, el: im, w: d.w };
         if (t.i === sel) { drawShot(); drawState(); }
       };
-      im.src = "data:image/jpeg;base64," + d.jpg;
+      im.src = `data:image/${d.fmt === "webp" ? "webp" : "jpeg"};base64,` + d.jpg;
     });
   }
 }
@@ -94,8 +94,10 @@ function drawState() {
     else if (meta.minimized) p.push(el("span", "stale",
       "Kompyuterda dastur oynasi yig'ilgan — rasmlar vaqtincha yangilanmaydi · The app window is minimized"));
     const shot = shots[sel];
-    if (shot && shot.t) {
-      const age = Math.max(0, Math.round((now() - shot.t) / 1000));
+    // O'zgarmagan bo'lim qayta yuborilmaydi; meta dagi vaqt = oxirgi tekshiruv.
+    const seen = Math.max(shot && shot.t ? shot.t : 0, (meta.tabs && meta.tabs[sel] && meta.tabs[sel].t) || 0);
+    if (seen) {
+      const age = Math.max(0, Math.round((now() - seen) / 1000));
       p.push(el("span", age > STALE_S ? "stale" : "live",
         `Yangilangan: ${age} s oldin · updated ${age} s ago`));
     }

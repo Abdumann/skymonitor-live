@@ -54,8 +54,9 @@ Sky Monitor (PC) --service account--> Firebase RTDB  <--o'qish-- GitHub Pages sa
 
 ## Bepul limitlar (Spark) va sarf
 - Bir vaqtda 100 tagacha ulanish (50+ ko'ruvchiga yetadi), oyiga 10 GB yuklab olish, 1 GB saqlash.
-- Rasm ~960 px, ~35-50 KB. Bitta tab har 20 soniyadan tez yangilanmaydi. Sayt tez o'tishi uchun
-  6 tabning hammasini oldindan oladi: bitta ko'ruvchi soatiga ~15-18 MB, 50 kishi x 2 soat ~1.7 GB.
+- Rasm oynaning asl o'lchamida (<= 1920 px) WebP, ~80-150 KB. Bo'lim ekranda o'zgarmagan bo'lsa qayta
+  yuborilmaydi; o'zgargan bo'lim har 15 soniyadan tez yuborilmaydi. Asosiy bo'limni uzluksiz ko'rgan
+  bitta odam soatiga ~30-40 MB oladi; odatiy tashrif (3-5 daqiqa) ~2-4 MB.
 - Firebase konsolida *Usage* yorlig'ida sarfni kuzating.
 
 ## Ishlash tartibi
