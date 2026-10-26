@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "sky": {
+      ".read": true,
+      ".write": false
+    },
+    "presence": {
+      "$id": {
+        ".write": "$id.length >= 8 && $id.length <= 40",
+        ".validate": "newData.isNumber() && newData.val() <= now + 60000 && newData.val() >= now - 60000"
+      }
+    }
+  }
+}

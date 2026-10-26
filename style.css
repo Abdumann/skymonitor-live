@@ -1,0 +1,36 @@
+:root{--bg:#06060f;--bar:#0c1222;--card:#10182a;--text:#eef2fb;--muted:#aebbd0;--line:#26324a;
+--sel:#196783;--warn:#ffb000;--ok:#4cc38a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:2;background:var(--bar);border-bottom:1px solid var(--line);padding:8px 16px}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+h1{font-size:17px;margin:0}
+.sub{color:var(--muted);font-size:12px}
+.kpis{display:flex;flex-wrap:wrap;gap:4px 14px;margin-left:auto;font-variant-numeric:tabular-nums}
+.kpis b{font-weight:600}
+.qrbtn{font:inherit;font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);
+border-radius:6px;padding:3px 8px;cursor:pointer}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;font:inherit;color:var(--muted);background:transparent;border:1px solid var(--line);
+border-radius:17px;padding:6px 14px;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--sel);border-color:var(--sel);color:var(--text);font-weight:600}
+main{padding:10px 16px 16px}
+.state{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:12px;margin-bottom:8px}
+.stale{color:var(--warn);font-weight:600}
+.live{color:var(--ok);font-weight:600}
+.wrap{overflow:auto}
+.shot{display:block;width:100%;max-width:1920px;margin:0 auto;border:1px solid var(--line);border-radius:6px;
+background:#000;cursor:zoom-in}
+.shot.zoom{width:auto;max-width:none;min-width:100%;cursor:zoom-out}
+.empty{padding:60px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:6px}
+footer{color:var(--muted);font-size:12px;padding:0 16px 20px}
+.qr{position:fixed;inset:0;z-index:5;background:rgba(6,6,15,.92);display:flex;align-items:center;
+justify-content:center;padding:16px}
+.qr[hidden]{display:none}
+.qrbox{background:#fff;color:#111;border-radius:12px;padding:20px;text-align:center;max-width:90vw}
+#qrcode{display:flex;justify-content:center}
+#qrcode img,#qrcode canvas{width:min(70vw,60vh,420px)!important;height:auto!important}
+.qrtitle{font-size:20px;font-weight:700;margin:12px 0 4px}
+.qrurl{font-size:13px;color:#444;margin:0;word-break:break-all}
+@media (max-width:600px){.sub{display:none}.kpis{margin-left:0;width:100%;font-size:13px}}

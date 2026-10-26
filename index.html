@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sky Monitor — jonli</title>
+<meta name="description" content="Osmon kamerasi asosida quyosh radiatsiyasi monitoringi — jonli ko'rinish">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>Sky Monitor</h1>
+    <span class="sub">Osmon kamerasi asosida quyosh radiatsiyasi monitoringi · Sky-camera solar radiation monitoring</span>
+    <div class="kpis" id="kpis"></div>
+    <button class="qrbtn" id="qrbtn" type="button" title="QR kod">QR</button>
+  </div>
+  <nav id="tabs"></nav>
+</header>
+<main>
+  <div class="state" id="state"><span>Ulanmoqda… · Connecting…</span></div>
+  <div class="wrap" id="wrap"><div class="empty">Yuklanmoqda… · Loading…</div></div>
+</main>
+<footer>
+  Faqat ko'rish uchun — kompyuterdagi dasturning jonli nusxasi. View only — live copy of the desktop app.
+  Rasmni kattalashtirish uchun bosing · Tap the image to zoom. Sahifani ochiq qoldiring · Keep this page open.
+</footer>
+<div class="qr" id="qr" hidden>
+  <div class="qrbox"><div id="qrcode"></div>
+  <p class="qrtitle">Skanerlang · Scan to view</p><p class="qrurl" id="qrurl"></p></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
