@@ -54,7 +54,11 @@ function subscribeAll() {
     subscribed.add(t.i);
     onValue(ref(db, "sky/img/" + t.i), (s) => {
       const d = s.val();
-      if (!d || !d.jpg) return;
+      if (!d || !d.jpg) {                     // efir o'chirildi: rasm saytdan ham olib tashlanadi
+        delete shots[t.i];
+        if (t.i === sel) { drawShot(); drawState(); }
+        return;
+      }
       const im = new Image();
       im.className = "shot";
       im.alt = t.name;
@@ -88,7 +92,9 @@ function drawTabs() {
 function drawState() {
   const p = [];
   if (!connected) p.push(el("span", "stale", "Internet aloqasi yo'q — qayta ulanmoqda · Reconnecting…"));
-  if (meta) {
+  if (meta && meta.off) {
+    p.push(el("span", "stale", "Efir o'chirilgan — tez orada qayta yoqiladi · Live view paused"));
+  } else if (meta) {
     const upd = (now() - meta.updated) / 1000;
     if (upd > STALE_S) p.push(el("span", "stale", "Dastur hozir ma'lumot yubormayapti · The station is offline"));
     else if (meta.minimized) p.push(el("span", "stale",
@@ -113,6 +119,11 @@ function drawState() {
 }
 function drawShot() {
   const wrap = $("wrap");
+  if (meta && meta.off) {
+    wrap.replaceChildren(el("div", "empty off",
+      "Jonli efir vaqtincha to'xtatilgan · The live view is paused"));
+    return;
+  }
   const shot = shots[sel];
   if (!shot) {
     wrap.replaceChildren(el("div", "empty",
@@ -138,6 +149,8 @@ function drawKpi() {
 onValue(ref(db, "sky/meta"), (s) => {
   meta = s.val();
   if (!meta) { drawState(); return; }
+  document.body.classList.toggle("paused", !!meta.off);
+  if (meta.off) { drawShot(); drawState(); return; }
   subscribeAll();
   if (sel === null) {
     let saved = null;
@@ -145,6 +158,7 @@ onValue(ref(db, "sky/meta"), (s) => {
     choose(saved !== null && meta.tabs && meta.tabs[+saved] ? +saved : 0);
   } else {
     drawTabs();
+    drawShot();                               // efir qayta yoqilganda rasm qaytadi
   }
   drawKpi();
   drawState();

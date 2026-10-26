@@ -28,6 +28,8 @@ main{padding:10px 16px 16px}
 .shot{display:block;width:100%;max-width:1920px;margin:0 auto;border:1px solid var(--line);border-radius:6px;
 background:#000;cursor:zoom-in}
 .shot.zoom{width:auto;max-width:none;min-width:100%;cursor:zoom-out}
+.empty.off{font-size:18px;color:var(--warn);border-color:var(--warn)}
+body.paused nav,body.paused .kpis{visibility:hidden}
 .empty{padding:60px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:6px}
 /* Kino rejimi: rasm butun ekranni to'ldiradi (telefon yonboshda yoki "To'liq ekran") */
 body.cinema{overflow:hidden;background:#000}
