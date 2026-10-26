@@ -151,6 +151,19 @@ onValue(ref(db, "sky/meta"), (s) => {
 });
 setInterval(drawState, 5000);
 
+// ── Jonli soat (Toshkent vaqti, Firebase server vaqtiga to'g'rilangan): dastur rasmlaridagi soat
+// yashirilgan, shuning uchun hamma bo'limda bir xil, har soniyada yangilanadigan vaqt shu yerda. ──
+const clockFmt = new Intl.DateTimeFormat("uz-UZ", { timeZone: "Asia/Tashkent", year: "numeric", month: "2-digit",
+  day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+function tickClock() {
+  const p = Object.fromEntries(clockFmt.formatToParts(new Date(now())).map((x) => [x.type, x.value]));
+  const text = `${p.day}.${p.month}.${p.year}  ${p.hour}:${p.minute}:${p.second}`;
+  $("clock").textContent = text;
+  $("cclock").textContent = text;
+}
+tickClock();
+setInterval(tickClock, 1000);
+
 // ── QR (ko'rgazma ekrani uchun: ?qr=1 yoki "QR" tugmasi) ──
 const pageUrl = location.origin + location.pathname;
 let qrMade = false;
@@ -172,6 +185,7 @@ const cinema = () => document.body.classList.contains("cinema");
 function setCinema(on) {
   document.body.classList.toggle("cinema", on);
   $("cine").hidden = !on;
+  $("cclock").hidden = !on;
   if (on) showControls(); else clearTimeout(hideTimer);
 }
 function showControls() {
